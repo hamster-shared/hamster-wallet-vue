@@ -1,3 +1,5 @@
+import type {WalletProvider} from './provider';
+
 export const localStorageKeys = {
     provider: 'sui.provider',
     address: 'sui.address',
@@ -14,7 +16,7 @@ export const features = {
 }
 
 // checks if a provider has the specified feature.
-const hasStandardFeature = (feature, provider) => {
+const hasStandardFeature = (feature : string, provider: any) => {
     // if the feature we are asking about is not in the list of supported features, reject.
     if(!Object.values(features).find(x => x === feature)) return false;
 
@@ -28,12 +30,12 @@ const errors = {
     NO_SELECTED_PROVIDER: "Please select a wallet provider to continue."
 };
 
-const StandardWallet = {
+const StandardWallet: any = {
 
     activeProvider: null,
     address: null,
     accounts: [],
-    providerMap: new Map(),
+    providerMap: new Map<string,WalletProvider>(),
 
     /*
         Tries to connect the client to the wallet and get a valid wallet address.
@@ -57,7 +59,7 @@ const StandardWallet = {
 
             StandardWallet.providerMap.set(provider.name, provider)
 
-            if(!StandardWallet.accounts.find(t => t.wallet === provider.name)){
+            if(!StandardWallet.accounts.find((t: any) => t.wallet === provider.name)){
                 StandardWallet.accounts.push({
                     "wallet": provider.name,
                     "address": res.accounts[0].address
@@ -96,7 +98,7 @@ const StandardWallet = {
         localStorage.removeItem(localStorageKeys.address);
 
         StandardWallet.providerMap.delete(provider.name)
-        StandardWallet.accounts = StandardWallet.accounts.filter(item => item.wallet !== provider.name)
+        StandardWallet.accounts = StandardWallet.accounts.filter((item:any) => item.wallet !== provider.name)
         console.log('StandardWallet.accounts',StandardWallet.accounts)
         return StandardWallet.accounts
     },
@@ -114,7 +116,7 @@ const StandardWallet = {
     /*
         Signs and executes a smart contract transaction.
      */
-    signAndExecuteTransactionBlock: async (tx) => {
+    signAndExecuteTransactionBlock: async (tx: any) => {
         if(!StandardWallet.activeProvider) throw new Error(errors.NO_ACTIVE_PROVIDER_ERROR);
         if(!hasStandardFeature(features.signAndExecuteTransactionBlock, StandardWallet.activeProvider))
             throw new Error(errors.NOT_AVAILABLE_FEATURE);
@@ -127,7 +129,7 @@ const StandardWallet = {
     /*
         Requests wallet permissions.
      */
-    connect: async (provider) => {
+    connect: async (provider: any) => {
 
         if(!hasStandardFeature(features.connect, provider)){
             throw new Error(errors.NOT_AVAILABLE_FEATURE)
@@ -136,7 +138,7 @@ const StandardWallet = {
         return provider.features[features.connect].connect()
 
     },
-    switchNetwork: async (value) => {
+    switchNetwork: async (value: string) =>  {
 
         if(!StandardWallet.activeProvider) throw new Error(errors.NO_ACTIVE_PROVIDER_ERROR);
 
@@ -145,7 +147,7 @@ const StandardWallet = {
 
         if(StandardWallet.activeProvider.name === targetChain){
             await StandardWallet.activeProvider.features[features.switchNetwork].switchNetwork(targetNetworkId)
-            const account = StandardWallet.accounts.find(t => t.wallet === StandardWallet.activeProvider.name )
+            const account = StandardWallet.accounts.find((t: any) => t.wallet === StandardWallet.activeProvider.name )
             return {
                 provider: StandardWallet.activeProvider,
                 account: account.address
@@ -155,7 +157,7 @@ const StandardWallet = {
             if (!provider){
                 throw new Error(errors.NO_ACTIVE_PROVIDER_ERROR)
             }
-            //TODO ..target provider switch network
+            //TODO ...target provider switch network
             if(provider.getNetwork){
                 const providerChainId = await provider.getNetwork()
                 console.log(providerChainId)
@@ -164,13 +166,17 @@ const StandardWallet = {
                 }
             }
 
-            const account = StandardWallet.accounts.find(t => t.wallet === provider.name )
+            const account = StandardWallet.accounts.find((t: any) => t.wallet === provider.name )
             return {
                 provider: provider,
                 account: account.address
             }
         }
 
+    },
+    // TODO ... 获取当前的Provider
+    currentProvider: (walletName: string) => {
+        return StandardWallet.providerMap.get(walletName)
     }
 }
 

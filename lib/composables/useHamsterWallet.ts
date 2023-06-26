@@ -14,6 +14,5 @@ export function useHamsterWallet(){
         suiAddress,
         suiProvider,
         changeNetwork,
-
     };
 }

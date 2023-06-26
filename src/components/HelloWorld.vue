@@ -2,6 +2,9 @@
 defineProps<{
   msg: string
 }>()
+
+console.log('window.ethereum')
+console.log(window.ethereum)
 </script>
 
 <template>

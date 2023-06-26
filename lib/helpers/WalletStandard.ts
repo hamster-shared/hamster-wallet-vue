@@ -5,14 +5,14 @@ const walletStandardEvents = ['standard:connect', 'standard:events', 'sui:signAn
 /*
     Checks if the wallet has all the standard wallet properties from the wallet-standards.
  */
-export const isWalletStandardWallet = wallet => {
+export const isWalletStandardWallet = (wallet: any) => {
     return walletStandardEvents.every((key) => wallet.features.hasOwnProperty(key));
 }
 
 /*
     Registers a wallet to the supplied walletList.
  */
-const registration = (wallet, walletList) => {
+const registration = (wallet: any, walletList: any[]) => {
     console.log('registration:', wallet)
     // make sure the wallet we are adding to the list is valid by wallet-standards.
     if(!isWalletStandardWallet(wallet)) return;
@@ -22,11 +22,11 @@ const registration = (wallet, walletList) => {
 }
 
 // dispatch an event that the app is ready to get wallets from chrome.
-const dispatchAppReadyEvent = (walletList) => {
+const dispatchAppReadyEvent = (walletList: any[]) => {
     try {
         window.dispatchEvent(new CustomEvent('wallet-standard:app-ready', {
             detail:{
-                register: (wallet) => registration(wallet, walletList)
+                register: (wallet: any) => registration(wallet, walletList)
             },
             bubbles: false,
             cancelable: false,
@@ -43,7 +43,7 @@ export const populateWalletList = (walletList = []) => {
 
     // save a listener for register-wallet events.
     window.addEventListener('wallet-standard:register-wallet', (data) => {
-            data.detail({register: (wallet) => registration(wallet, walletList)});
+            data.detail({register: (wallet: any) => registration(wallet, walletList)});
         }
     );
 

@@ -2,11 +2,10 @@ import {reactive, ref} from "vue";
 
 import HamsterConnectButton from "./components/HamsterConnectButton.vue";
 import StandardWallet , {localStorageKeys} from "./helpers/CoreWallet";
-import {populateWalletList} from "./helpers/WalletStandard";
+import  {populateWalletList} from './helpers/WalletStandard';
 
 export default {
     install: (app : any, options :any) => {
-
 
         const suiAddress = localStorage.getItem(localStorageKeys.address) || null;
         app.provide("suiAddress", ref(suiAddress));
